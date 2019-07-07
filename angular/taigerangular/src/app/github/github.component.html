@@ -1,0 +1,87 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<div class="container">
+
+    <form #f="ngForm" novalidate [formGroup]="gitHubUserForm" class="was-validated">
+        <div class="card row" style="margin: 5px; ">
+            <div class="card-header">
+                <h3 class="panel-title"> GitHUB Repository Read Me File Contents</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="User">User:</label>
+                    <input class="form-control" id="repoUser" formControlName="repoUser" type="text"
+                        value={{gitHubUserForm.repoUser}} [(ngModel)]="gitHubUserForm.repoUser"
+                        placeholder="Eg: mojombo" required />
+                </div>
+                <button type="submit" class="btn btn-primary" (click)="PopulateUserRepositories();"
+                    [disabled]="!f.form.valid">
+                    Populate User Repository
+                </button>
+
+            </div>
+        </div>
+    </form>
+    <div class="d-flex justify-content-center" *ngIf="showAnimation">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <div class="card row" style="margin: 15px; " *ngIf="showNoRepositoryFoundMessage">
+        <div class="card-header">
+            <h4 class="panel-title" *ngIf="showNoRepositoryFoundMessage"> No Repositories Found for the user - {{gitHubUserForm.repoUser}} <b> </b>
+            </h4>
+        </div>
+    </div>
+
+    <div class="card row" style="margin: 15px; " *ngIf="showNoRepositoryFound">
+        <div class="card-header">
+            <h3 class="panel-title"> <b>Repositories</b> </h3>
+        </div>
+        <div class="card-body" *ngIf="showNoRepositoryFound">
+            <div class="table-responsive-sm">
+                <table class="table" class="table table-striped">
+                    <tr>
+                        <th>Sl.No.</th>
+                        <th>Repository Name</th>
+                        <th>Repository URL</th>
+                        <th>Repository Description</th>
+                        <th>ReadMe File</th>
+                    </tr>
+                    <tbody>
+                        <tr *ngFor="let user of repoList;let i=index; let odd = odd; let even = even"
+                            [class.bg-info]="odd" [class.bg-warning]="even">
+                            <td>{{i+1}}</td>
+                            <td>{{user.name}}</td>
+                            <td>{{user.html_url}}</td>
+                            <td>{{user.description}}</td>
+                            <td class="text-xs-center">
+                                <button class="btn btn-primary"
+                                    (click)="GetReadMeFileDetails(user.contents_url,user.name)" data-target="#myModal1"
+                                    data-toggle="modal">
+                                    Select
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card row" style="margin: 15px; " *ngIf="repoName!=null && showNoRepositoryFound">
+        <div class="card-header">
+            <h3> Repository: <b> {{repoName}}</b> </h3>
+            <h4>Read Me File Content Details </h4>
+        </div>
+        <div class="card-body" *ngIf="readMeFileFound">
+            {{this.readMeFileContents}}
+        </div>
+        <div class="card-body" *ngIf="!readMeFileFound">
+            <h2>Read Me File Not Found for the Repository:{{repoName}}</h2>
+            <br>
+            <br>
+        </div>
+    </div>
+
+
+</div>
